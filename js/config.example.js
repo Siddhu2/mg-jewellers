@@ -4,8 +4,8 @@
 // Get them from: https://supabase.com > Project Settings > API
 // =============================================
 
-const SUPABASE_URL = 'https://sgrnrikdimyeucemhwif.supabase.co';        // e.g. https://abcxyz.supabase.co
-const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNncm5yaWtkaW15ZXVjZW1od2lmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ3MTE4OTUsImV4cCI6MjA5MDI4Nzg5NX0.R2H4zKqVP4AFN4r4AW3g1qrqPlrQKkwUxeiFla9qn_o'; // Public anon key
+const SUPABASE_URL = 'YOUR_SUPABASE_URL';        // e.g. https://abcxyz.supabase.co
+const SUPABASE_ANON_KEY = 'YOUR_SUPABASE_ANON_KEY'; // Public anon key
 
 // Jewellery categories configuration
 const CATEGORIES = [
