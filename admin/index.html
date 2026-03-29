@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Login — MG Jewellers</title>
+  <link rel="icon" href="../favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="../css/style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+</head>
+<body>
+<div class="login-page">
+  <div class="login-box">
+    <div class="login-logo">
+      <div class="login-logo-text">MG Jewellers</div>
+      <div class="login-logo-sub">Admin Portal</div>
+    </div>
+    <h2 class="login-title">Sign In</h2>
+    <form class="login-form" id="loginForm" novalidate>
+      <div class="form-group">
+        <label class="form-label" for="email">Email Address</label>
+        <input
+          type="email"
+          id="email"
+          class="form-input"
+          placeholder="admin@example.com"
+          required
+          autocomplete="email"
+        >
+      </div>
+      <div class="form-group">
+        <label class="form-label" for="password">Password</label>
+        <input
+          type="password"
+          id="password"
+          class="form-input"
+          placeholder="••••••••"
+          required
+          autocomplete="current-password"
+        >
+      </div>
+      <div id="loginError" style="color:#dc3545; font-size:0.88rem; margin-top:-8px; display:none;"></div>
+      <button type="submit" class="btn btn-primary" id="loginBtn" style="width:100%; justify-content:center;">
+        Sign In
+      </button>
+    </form>
+    <p style="text-align:center; margin-top:20px; font-size:0.82rem; color:#999;">
+      <a href="../index.html" style="color:var(--gold);">← Back to website</a>
+    </p>
+  </div>
+</div>
+<script src="../js/config.js"></script>
+<script>
+  // Redirect if already logged in
+  supabaseClient.auth.getSession().then(({ data }) => {
+    if (data.session) window.location.href = 'dashboard.html';
+  });
+
+  document.getElementById('loginForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const email    = document.getElementById('email').value.trim();
+    const password = document.getElementById('password').value;
+    const btn      = document.getElementById('loginBtn');
+    const errDiv   = document.getElementById('loginError');
+
+    btn.textContent = 'Signing in...';
+    btn.disabled    = true;
+    errDiv.style.display = 'none';
+
+    const { error } = await supabaseClient.auth.signInWithPassword({ email, password });
+
+    if (error) {
+      errDiv.textContent   = error.message || 'Invalid email or password.';
+      errDiv.style.display = 'block';
+      btn.textContent = 'Sign In';
+      btn.disabled    = false;
+    } else {
+      window.location.href = 'dashboard.html';
+    }
+  });
+</script>
+</body>
+</html>

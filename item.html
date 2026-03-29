@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Item Details — MG Jewellers</title>
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+</head>
+<body>
+
+<nav class="navbar">
+  <div class="container nav-inner">
+    <a href="index.html" class="nav-logo">
+      <div>
+        <span class="nav-logo-text">MG Jewellers</span>
+        <span class="nav-logo-sub">Fine Jewellery</span>
+      </div>
+    </a>
+    <ul class="nav-links" id="navLinks">
+      <li><a href="index.html">Home</a></li>
+      <li><a href="index.html#all-categories">All Categories</a></li>
+    </ul>
+    <button class="nav-hamburger" id="hamburger" aria-label="Toggle menu">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+</nav>
+
+<!-- Item Header -->
+<header class="page-header" id="itemPageHeader">
+  <div class="container">
+    <nav class="breadcrumb" id="itemBreadcrumb">
+      <a href="index.html">Home</a>
+      <span class="breadcrumb-sep">›</span>
+      <a href="#" id="breadCatLink">Category</a>
+      <span class="breadcrumb-sep">›</span>
+      <span id="breadItemName">Item</span>
+    </nav>
+  </div>
+</header>
+
+<!-- Item Detail -->
+<main class="item-detail">
+  <div class="container">
+    <div id="itemContent">
+      <div class="loading">
+        <div class="spinner"></div>
+        <span>Loading item...</span>
+      </div>
+    </div>
+
+    <!-- Related Items -->
+    <div id="relatedSection" class="hidden" style="margin-top: 64px;">
+      <div class="divider"><span class="divider-icon">✦</span></div>
+      <h2 class="section-title" style="margin-bottom: 8px;">More from this Category</h2>
+      <p class="section-subtitle">You might also like</p>
+      <div id="relatedGrid" class="items-grid"></div>
+    </div>
+  </div>
+</main>
+
+<footer class="footer">
+  <div class="container">
+    <div class="footer-bottom">
+      <p>&copy; <span id="year"></span> <span class="footer-gold">MG Jewellers</span>. All rights reserved.</p>
+    </div>
+  </div>
+</footer>
+
+<!-- Lightbox -->
+<div class="lightbox" id="lightbox" role="dialog" aria-modal="true">
+  <button class="lightbox-close" id="lightboxClose" aria-label="Close">✕</button>
+  <button class="lightbox-prev" id="lightboxPrev" aria-label="Previous">‹</button>
+  <img class="lightbox-img" id="lightboxImg" src="" alt="">
+  <button class="lightbox-next" id="lightboxNext" aria-label="Next">›</button>
+</div>
+
+<div class="toast-container" id="toastContainer"></div>
+
+<script src="js/config.js"></script>
+<script src="js/item.js"></script>
+</body>
+</html>

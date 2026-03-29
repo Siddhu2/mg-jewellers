@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Category — MG Jewellers</title>
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+</head>
+<body>
+
+<nav class="navbar">
+  <div class="container nav-inner">
+    <a href="index.html" class="nav-logo">
+      <div>
+        <span class="nav-logo-text">MG Jewellers</span>
+        <span class="nav-logo-sub">Fine Jewellery</span>
+      </div>
+    </a>
+    <ul class="nav-links" id="navLinks">
+      <li><a href="index.html">Home</a></li>
+      <li><a href="index.html#all-categories">All Categories</a></li>
+    </ul>
+    <button class="nav-hamburger" id="hamburger" aria-label="Toggle menu">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+</nav>
+
+<!-- Page Header -->
+<header class="page-header" id="pageHeader">
+  <div class="container">
+    <nav class="breadcrumb">
+      <a href="index.html">Home</a>
+      <span class="breadcrumb-sep">›</span>
+      <span id="breadcrumbCat">Category</span>
+    </nav>
+    <h1 class="page-header-title" id="pageTitle">Loading...</h1>
+    <p class="page-header-sub" id="pageDesc"></p>
+  </div>
+</header>
+
+<!-- Filter Bar -->
+<div class="filter-bar">
+  <div class="container filter-inner">
+    <label class="filter-label">Sort by:</label>
+    <select class="filter-select" id="sortSelect">
+      <option value="created_at_desc">Newest First</option>
+      <option value="created_at_asc">Oldest First</option>
+      <option value="name_asc">Name A–Z</option>
+      <option value="name_desc">Name Z–A</option>
+      <option value="gram_asc">Weight: Low–High</option>
+      <option value="gram_desc">Weight: High–Low</option>
+    </select>
+    <div class="search-wrap">
+      <span class="search-icon">🔍</span>
+      <input type="text" class="search-input" id="searchInput" placeholder="Search by name or number...">
+    </div>
+    <span class="items-count" id="itemsCount"></span>
+  </div>
+</div>
+
+<!-- Items Grid -->
+<main class="section">
+  <div class="container">
+    <div id="itemsGrid" class="items-grid">
+      <div class="loading">
+        <div class="spinner"></div>
+        <span>Loading items...</span>
+      </div>
+    </div>
+    <div id="pagination" class="pagination"></div>
+  </div>
+</main>
+
+<footer class="footer">
+  <div class="container">
+    <div class="footer-bottom">
+      <p>&copy; <span id="year"></span> <span class="footer-gold">MG Jewellers</span>. All rights reserved.</p>
+    </div>
+  </div>
+</footer>
+
+<div class="toast-container" id="toastContainer"></div>
+
+<script src="js/config.js"></script>
+<script src="js/category.js"></script>
+</body>
+</html>

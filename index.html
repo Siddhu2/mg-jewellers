@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Explore our exquisite collection of handcrafted jewellery including rings, earrings, necklaces, bangles and more.">
+  <title>MG Jewellers — Fine Jewellery Collection</title>
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <!-- Supabase CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+</head>
+<body>
+
+<!-- ===================== NAVBAR ===================== -->
+<nav class="navbar">
+  <div class="container nav-inner">
+    <a href="index.html" class="nav-logo">
+      <div>
+        <span class="nav-logo-text">MG Jewellers</span>
+        <span class="nav-logo-sub">Fine Jewellery</span>
+      </div>
+    </a>
+    <ul class="nav-links" id="navLinks">
+      <li><a href="index.html" class="active">Home</a></li>
+      <li><a href="category.html?cat=rings">Rings</a></li>
+      <li><a href="category.html?cat=necklaces">Necklaces</a></li>
+      <li><a href="category.html?cat=earrings">Earrings</a></li>
+      <li><a href="index.html#all-categories">All Categories</a></li>
+    </ul>
+    <button class="nav-hamburger" id="hamburger" aria-label="Toggle menu">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+</nav>
+
+<!-- ===================== HERO ===================== -->
+<section class="hero">
+  <div class="container">
+    <div class="hero-content">
+      <span class="hero-badge">✦ Handcrafted Excellence</span>
+      <h1 class="hero-title">
+        Where Every Jewel<br>
+        Tells a <span>Story</span>
+      </h1>
+      <p class="hero-desc">
+        Discover our curated collection of handcrafted jewellery — each piece
+        a testament to artisan craftsmanship, timeless beauty, and lasting elegance.
+      </p>
+      <div class="hero-cta">
+        <a href="#all-categories" class="btn btn-primary">Explore Collection</a>
+        <a href="category.html?cat=special-ornaments" class="btn btn-outline">Special Ornaments</a>
+      </div>
+    </div>
+  </div>
+  <div class="hero-scroll">
+    <span>Scroll</span>
+    <svg width="16" height="24" viewBox="0 0 16 24" fill="none">
+      <path d="M8 5v14M3 14l5 5 5-5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>
+  </div>
+</section>
+
+<!-- ===================== FEATURED ITEMS ===================== -->
+<section class="section" id="featured">
+  <div class="container">
+    <h2 class="section-title">Featured Pieces</h2>
+    <p class="section-subtitle">Handpicked from our latest collection</p>
+    <div id="featuredGrid" class="items-grid">
+      <div class="loading">
+        <div class="spinner"></div>
+        <span>Loading collection...</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== CATEGORIES ===================== -->
+<section class="section section-alt" id="all-categories">
+  <div class="container">
+    <h2 class="section-title">Browse by Category</h2>
+    <p class="section-subtitle">Find your perfect piece</p>
+    <div class="categories-grid" id="categoriesGrid">
+      <!-- Populated by JS -->
+    </div>
+  </div>
+</section>
+
+<!-- ===================== WHY US ===================== -->
+<section class="section">
+  <div class="container">
+    <h2 class="section-title">Why Choose Us</h2>
+    <p class="section-subtitle">Our promise to you</p>
+    <div style="display:grid; grid-template-columns: repeat(auto-fill, minmax(220px,1fr)); gap:28px; margin-top: 0;">
+      <div class="category-card">
+        <div class="category-icon">🏅</div>
+        <div class="category-name">Certified Quality</div>
+        <div class="category-desc">Every piece verified with unique item numbers for authenticity and traceability.</div>
+      </div>
+      <div class="category-card">
+        <div class="category-icon">⚖️</div>
+        <div class="category-name">Accurate Weight</div>
+        <div class="category-desc">Precise gram weight listed for every jewellery item — complete transparency.</div>
+      </div>
+      <div class="category-card">
+        <div class="category-icon">🎨</div>
+        <div class="category-name">Artisan Crafted</div>
+        <div class="category-desc">Each design crafted by skilled artisans with decades of experience.</div>
+      </div>
+      <div class="category-card">
+        <div class="category-icon">📸</div>
+        <div class="category-name">Multiple Views</div>
+        <div class="category-desc">View every piece from multiple angles with 3 high-quality photographs.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== FOOTER ===================== -->
+<footer class="footer">
+  <div class="container">
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <div class="footer-logo">MG Jewellers</div>
+        <p class="footer-tagline">
+          Crafting timeless beauty since generations. Each piece in our collection
+          is a work of art, designed to be treasured forever.
+        </p>
+      </div>
+      <div>
+        <div class="footer-heading">Collections</div>
+        <ul class="footer-links" id="footerCatLinks">
+          <!-- Populated by JS -->
+        </ul>
+      </div>
+      <div>
+        <div class="footer-heading">Quick Links</div>
+        <ul class="footer-links">
+          <li><a href="index.html">Home</a></li>
+          <li><a href="index.html#all-categories">All Categories</a></li>
+          <li><a href="admin/index.html">Admin Login</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>&copy; <span id="year"></span> <span class="footer-gold">MG Jewellers</span>. All rights reserved.</p>
+    </div>
+  </div>
+</footer>
+
+<!-- ===================== TOAST ===================== -->
+<div class="toast-container" id="toastContainer"></div>
+
+<script src="js/config.js"></script>
+<script src="js/main.js"></script>
+</body>
+</html>

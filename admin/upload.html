@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title id="pageTitle">Add New Item — Admin — MG Jewellers</title>
+  <link rel="icon" href="../favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="../css/style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+</head>
+<body>
+<div class="admin-layout">
+
+  <!-- Top Bar -->
+  <header class="admin-topbar">
+    <div class="admin-topbar-logo">✦ MG Jewellers — Admin</div>
+    <span class="admin-topbar-user" id="userEmail"></span>
+    <button class="btn btn-outline btn-sm" id="logoutBtn">Sign Out</button>
+  </header>
+
+  <!-- Sidebar -->
+  <aside class="admin-sidebar">
+    <div class="sidebar-section">
+      <div class="sidebar-section-title">Main</div>
+      <a href="dashboard.html" class="sidebar-link">
+        <span class="sidebar-link-icon">📊</span> Dashboard
+      </a>
+      <a href="upload.html" class="sidebar-link active">
+        <span class="sidebar-link-icon">➕</span> Add New Item
+      </a>
+    </div>
+    <div class="sidebar-section">
+      <div class="sidebar-section-title">Categories</div>
+      <div id="sidebarCats"><!-- JS --></div>
+    </div>
+    <div class="sidebar-section">
+      <div class="sidebar-section-title">View Site</div>
+      <a href="../index.html" target="_blank" class="sidebar-link">
+        <span class="sidebar-link-icon">🌐</span> Open Website
+      </a>
+    </div>
+  </aside>
+
+  <!-- Main Content -->
+  <main class="admin-main">
+    <div class="admin-page-title" id="formHeading">Add New Jewellery Item</div>
+    <div class="admin-page-sub" id="formSubheading">Fill in the details below to add a new item to your collection</div>
+
+    <div class="admin-card">
+      <div class="admin-card-header">
+        <div class="admin-card-title" id="cardTitle">Item Details</div>
+      </div>
+      <div class="admin-card-body">
+        <form id="itemForm" novalidate>
+          <!-- Hidden ID for edit mode -->
+          <input type="hidden" id="itemId">
+
+          <div class="form-grid">
+
+            <!-- Item Name -->
+            <div class="form-group">
+              <label class="form-label" for="itemName">
+                Item Name <span class="required">*</span>
+              </label>
+              <input type="text" id="itemName" class="form-input" placeholder="e.g. Diamond Solitaire Ring" required>
+            </div>
+
+            <!-- Unique Number -->
+            <div class="form-group">
+              <label class="form-label" for="itemNumber">
+                Unique Item Number <span class="required">*</span>
+              </label>
+              <input type="text" id="itemNumber" class="form-input" placeholder="e.g. RNG-2024-001" required>
+              <span class="form-hint">Must be unique across all items</span>
+            </div>
+
+            <!-- Category -->
+            <div class="form-group">
+              <label class="form-label" for="itemCategory">
+                Category <span class="required">*</span>
+              </label>
+              <select id="itemCategory" class="form-select" required>
+                <option value="">— Select Category —</option>
+              </select>
+            </div>
+
+            <!-- Weight -->
+            <div class="form-group">
+              <label class="form-label" for="itemGram">
+                Weight (grams) <span class="required">*</span>
+              </label>
+              <input type="number" id="itemGram" class="form-input" placeholder="e.g. 5.25" step="0.001" min="0.001" required>
+            </div>
+
+            <!-- Description -->
+            <div class="form-group form-full">
+              <label class="form-label" for="itemDesc">Description</label>
+              <textarea id="itemDesc" class="form-textarea" placeholder="Describe the jewellery piece, its design, occasion, material details..."></textarea>
+            </div>
+
+            <!-- Images -->
+            <div class="form-group form-full">
+              <label class="form-label">
+                Jewellery Images <span class="required">*</span>
+              </label>
+              <span class="form-hint" style="margin-bottom:12px; display:block;">
+                Upload a file <strong>or</strong> paste a Google Drive / direct image URL for each slot. Image 1 is the main display image.
+              </span>
+              <div class="img-upload-grid">
+
+                <!-- Image 1 -->
+                <div>
+                  <div class="img-upload-box" id="dropBox1">
+                    <input type="file" class="img-upload-input" id="imgInput1" accept="image/*" onchange="handleImageSelect(1, this)">
+                    <img class="img-preview hidden" id="imgPreview1" alt="Preview 1">
+                    <button type="button" class="img-remove-btn" id="removeBtn1" onclick="removeImage(1)">✕</button>
+                    <div class="img-upload-icon" id="uploadIcon1">📸</div>
+                    <div class="img-upload-text" id="uploadText1">Click to upload<br>Image 1 (Main)</div>
+                  </div>
+                  <div class="upload-label">Image 1 — Main ★</div>
+                  <div class="upload-progress hidden" id="progress1"><div class="upload-progress-bar" id="progressBar1"></div></div>
+                  <div class="url-input-wrap">
+                    <span class="url-or-divider">or paste URL</span>
+                    <input type="url" class="form-input url-input" id="urlInput1"
+                      placeholder="https://drive.google.com/file/d/..."
+                      oninput="handleUrlInput(1, this)">
+                    <span class="url-status hidden" id="urlStatus1"></span>
+                  </div>
+                </div>
+
+                <!-- Image 2 -->
+                <div>
+                  <div class="img-upload-box" id="dropBox2">
+                    <input type="file" class="img-upload-input" id="imgInput2" accept="image/*" onchange="handleImageSelect(2, this)">
+                    <img class="img-preview hidden" id="imgPreview2" alt="Preview 2">
+                    <button type="button" class="img-remove-btn" id="removeBtn2" onclick="removeImage(2)">✕</button>
+                    <div class="img-upload-icon" id="uploadIcon2">📸</div>
+                    <div class="img-upload-text" id="uploadText2">Click to upload<br>Image 2</div>
+                  </div>
+                  <div class="upload-label">Image 2</div>
+                  <div class="upload-progress hidden" id="progress2"><div class="upload-progress-bar" id="progressBar2"></div></div>
+                  <div class="url-input-wrap">
+                    <span class="url-or-divider">or paste URL</span>
+                    <input type="url" class="form-input url-input" id="urlInput2"
+                      placeholder="https://drive.google.com/file/d/..."
+                      oninput="handleUrlInput(2, this)">
+                    <span class="url-status hidden" id="urlStatus2"></span>
+                  </div>
+                </div>
+
+                <!-- Image 3 -->
+                <div>
+                  <div class="img-upload-box" id="dropBox3">
+                    <input type="file" class="img-upload-input" id="imgInput3" accept="image/*" onchange="handleImageSelect(3, this)">
+                    <img class="img-preview hidden" id="imgPreview3" alt="Preview 3">
+                    <button type="button" class="img-remove-btn" id="removeBtn3" onclick="removeImage(3)">✕</button>
+                    <div class="img-upload-icon" id="uploadIcon3">📸</div>
+                    <div class="img-upload-text" id="uploadText3">Click to upload<br>Image 3</div>
+                  </div>
+                  <div class="upload-label">Image 3</div>
+                  <div class="upload-progress hidden" id="progress3"><div class="upload-progress-bar" id="progressBar3"></div></div>
+                  <div class="url-input-wrap">
+                    <span class="url-or-divider">or paste URL</span>
+                    <input type="url" class="form-input url-input" id="urlInput3"
+                      placeholder="https://drive.google.com/file/d/..."
+                      oninput="handleUrlInput(3, this)">
+                    <span class="url-status hidden" id="urlStatus3"></span>
+                  </div>
+                </div>
+
+              </div>
+              <p class="form-hint" style="margin-top:12px;">
+                💡 <strong>Google Drive:</strong> Right-click image → Share → set to <em>"Anyone with the link"</em> → copy link and paste above.
+              </p>
+            </div>
+
+          </div><!-- /form-grid -->
+
+          <div class="form-actions">
+            <a href="dashboard.html" class="btn btn-outline">Cancel</a>
+            <button type="submit" class="btn btn-primary" id="submitBtn">
+              Save Item
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </main>
+</div>
+
+<div class="toast-container" id="toastContainer"></div>
+
+<script src="../js/config.js"></script>
+<script src="../js/upload.js"></script>
+<script src="../js/admin.js"></script>
+</body>
+</html>

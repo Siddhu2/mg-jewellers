@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard — Admin — MG Jewellers</title>
+  <link rel="icon" href="../favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="../css/style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+</head>
+<body>
+<div class="admin-layout">
+
+  <!-- Top Bar -->
+  <header class="admin-topbar">
+    <div class="admin-topbar-logo">✦ MG Jewellers — Admin</div>
+    <span class="admin-topbar-user" id="userEmail"></span>
+    <button class="btn btn-outline btn-sm" id="logoutBtn">Sign Out</button>
+  </header>
+
+  <!-- Sidebar -->
+  <aside class="admin-sidebar">
+    <div class="sidebar-section">
+      <div class="sidebar-section-title">Main</div>
+      <a href="dashboard.html" class="sidebar-link active">
+        <span class="sidebar-link-icon">📊</span> Dashboard
+      </a>
+      <a href="upload.html" class="sidebar-link">
+        <span class="sidebar-link-icon">➕</span> Add New Item
+      </a>
+    </div>
+    <div class="sidebar-section">
+      <div class="sidebar-section-title">Categories</div>
+      <div id="sidebarCats"><!-- JS --></div>
+    </div>
+    <div class="sidebar-section">
+      <div class="sidebar-section-title">View Site</div>
+      <a href="../index.html" target="_blank" class="sidebar-link">
+        <span class="sidebar-link-icon">🌐</span> Open Website
+      </a>
+    </div>
+  </aside>
+
+  <!-- Main Content -->
+  <main class="admin-main">
+    <div class="admin-page-title">Dashboard</div>
+    <div class="admin-page-sub">Overview of your jewellery collection</div>
+
+    <!-- Stats -->
+    <div class="admin-stats" id="statsRow">
+      <div class="stat-card">
+        <div class="stat-number" id="statTotal">—</div>
+        <div class="stat-label">Total Items</div>
+      </div>
+      <!-- Per-category stats injected by JS -->
+    </div>
+
+    <!-- Items Table -->
+    <div class="admin-card">
+      <div class="admin-card-header">
+        <div class="admin-card-title">All Jewellery Items</div>
+        <div style="display:flex; gap:12px; align-items:center; flex-wrap:wrap;">
+          <div class="search-wrap">
+            <span class="search-icon">🔍</span>
+            <input type="text" class="search-input" id="tableSearch" placeholder="Search...">
+          </div>
+          <select class="filter-select" id="catFilter">
+            <option value="">All Categories</option>
+          </select>
+          <a href="upload.html" class="btn btn-primary btn-sm">+ Add Item</a>
+        </div>
+      </div>
+      <div class="admin-card-body" style="padding:0;">
+        <div class="admin-table-wrap">
+          <table class="admin-table" id="itemsTable">
+            <thead>
+              <tr>
+                <th>Image</th>
+                <th>Item #</th>
+                <th>Name</th>
+                <th>Category</th>
+                <th>Weight</th>
+                <th>Added</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="tableBody">
+              <tr><td colspan="7" style="text-align:center; padding:48px;">
+                <div class="spinner" style="margin:0 auto;"></div>
+              </td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+
+<!-- Delete Confirm Modal -->
+<div class="modal-overlay" id="deleteModal">
+  <div class="modal-box">
+    <div class="modal-title">Delete Item</div>
+    <div class="modal-body" id="deleteModalBody">Are you sure you want to delete this item? This action cannot be undone.</div>
+    <div class="modal-actions">
+      <button class="btn btn-outline" onclick="closeDeleteModal()">Cancel</button>
+      <button class="btn btn-danger" id="confirmDeleteBtn">Delete</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast-container" id="toastContainer"></div>
+
+<script src="../js/config.js"></script>
+<script src="../js/dashboard.js"></script>
+<script src="../js/admin.js"></script>
+</body>
+</html>
