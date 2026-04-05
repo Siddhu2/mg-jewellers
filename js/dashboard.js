@@ -107,8 +107,10 @@ function renderTable(items) {
   }
 
   tbody.innerHTML = items.map(item => {
-    const cat    = CATEGORIES.find(c => c.id === item.category);
-    const imgSrc = item.image1_url || 'https://placehold.co/52x52/F5E6C8/8B6914?text=—';
+    const cat         = CATEGORIES.find(c => c.id === item.category);
+    const _placeholder = 'https://placehold.co/52x52/F5E6C8/8B6914?text=—';
+    const _allUrls     = [item.image1_url, item.image2_url, item.image3_url].filter(Boolean);
+    const imgSrc       = _allUrls.find(u => !(u.includes('drive.google.com/file/d/') && u.includes('/preview'))) || _placeholder;
     return `
       <tr>
         <td><img class="admin-table-img" src="${imgSrc}" alt="${escHtml(item.name)}" loading="lazy"></td>

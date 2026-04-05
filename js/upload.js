@@ -6,9 +6,10 @@ const MAX_WIDTH    = 1000;   // px — max dimension after resize
 const MAX_HEIGHT   = 1000;
 const JPEG_QUALITY = 0.82;   // 0–1, higher = better quality, bigger file
 
-const imageFiles   = { 1: null, 2: null, 3: null }; // File objects for upload
-const imageUrls    = { 1: null, 2: null, 3: null }; // existing URLs (edit mode)
+const imageFiles      = { 1: null, 2: null, 3: null }; // File objects for upload
+const imageUrls       = { 1: null, 2: null, 3: null }; // existing URLs (edit mode)
 const imagePastedUrls = { 1: null, 2: null, 3: null }; // pasted Drive/direct URLs
+const slotIsVideo     = { 1: false, 2: false, 3: false }; // true if slot holds a video URL
 
 let editMode   = false;
 let editItemId = null;
@@ -62,12 +63,22 @@ async function loadEditItem(id) {
       const url = data[`image${n}_url`];
       if (!url) return;
       imageUrls[n] = url;
-      showPreview(n, url);
-      // If the saved URL is a Drive URL, show it in the URL input field
-      if (isDriveUrl(url)) {
+      if (isVideoUrl(url)) {
+        slotIsVideo[n]     = true;
+        imagePastedUrls[n] = url;
         const urlInput = document.getElementById(`urlInput${n}`);
         if (urlInput) urlInput.value = url;
-        setUrlStatus(n, 'ok', '✓ Drive URL loaded');
+        const cb = document.getElementById(`isVideo${n}`);
+        if (cb) cb.checked = true;
+        setUrlStatus(n, 'ok', '▶ Google Drive video');
+        showVideoPreview(n);
+      } else {
+        showPreview(n, url);
+        if (isDriveUrl(url)) {
+          const urlInput = document.getElementById(`urlInput${n}`);
+          if (urlInput) urlInput.value = url;
+          setUrlStatus(n, 'ok', '✓ Drive URL loaded');
+        }
       }
     });
   } catch (err) {
@@ -175,17 +186,33 @@ function showPreview(n, src) {
   document.getElementById(`removeBtn${n}`).style.display = 'flex';
 }
 
+function showVideoPreview(n) {
+  const icon = document.getElementById(`uploadIcon${n}`);
+  const text = document.getElementById(`uploadText${n}`);
+  icon.textContent    = '🎬';
+  icon.style.display  = '';
+  text.innerHTML      = 'Video ready to embed';
+  text.style.display  = '';
+  document.getElementById(`imgPreview${n}`).classList.add('hidden');
+  document.getElementById(`removeBtn${n}`).style.display = 'flex';
+}
+
 function removeImage(n) {
   imageFiles[n]      = null;
   imageUrls[n]       = null;
   imagePastedUrls[n] = null;
+  slotIsVideo[n]     = false;
   document.getElementById(`imgInput${n}`).value  = '';
   document.getElementById(`urlInput${n}`).value  = '';
   document.getElementById(`imgPreview${n}`).src  = '';
   document.getElementById(`imgPreview${n}`).classList.add('hidden');
-  document.getElementById(`uploadIcon${n}`).style.display = '';
+  const icon = document.getElementById(`uploadIcon${n}`);
+  icon.textContent   = '📸';
+  icon.style.display = '';
   document.getElementById(`uploadText${n}`).style.display = '';
   document.getElementById(`removeBtn${n}`).style.display  = 'none';
+  const cb = document.getElementById(`isVideo${n}`);
+  if (cb) cb.checked = false;
   setUrlStatus(n, '', '');
 }
 
@@ -231,6 +258,25 @@ function isDriveUrl(url) {
   return url.includes('drive.google.com') || url.includes('lh3.googleusercontent.com');
 }
 
+/** Returns true if the URL is a stored Drive video embed URL (contains /preview) */
+function isVideoUrl(url) {
+  return url && url.includes('drive.google.com/file/d/') && url.includes('/preview');
+}
+
+/**
+ * Convert a Google Drive sharing URL to a video embed (preview) URL.
+ * Supports the same URL patterns as convertDriveUrl.
+ */
+function convertDriveVideoUrl(raw) {
+  const trimmed = raw.trim();
+  if (trimmed.includes('/preview')) return trimmed; // already an embed URL
+  const fileMatch = trimmed.match(/\/file\/d\/([a-zA-Z0-9_-]+)/);
+  if (fileMatch) return `https://drive.google.com/file/d/${fileMatch[1]}/preview`;
+  const idMatch = trimmed.match(/[?&]id=([a-zA-Z0-9_-]+)/);
+  if (idMatch) return `https://drive.google.com/file/d/${idMatch[1]}/preview`;
+  return trimmed;
+}
+
 function setUrlStatus(n, type, msg) {
   const el = document.getElementById(`urlStatus${n}`);
   if (!el) return;
@@ -247,11 +293,16 @@ function handleUrlInput(n, input) {
 
   if (!raw) {
     imagePastedUrls[n] = null;
+    slotIsVideo[n]     = false;
+    const cb = document.getElementById(`isVideo${n}`);
+    if (cb) cb.checked = false;
     // Only reset preview if no file is selected
     if (!imageFiles[n]) {
       document.getElementById(`imgPreview${n}`).src = '';
       document.getElementById(`imgPreview${n}`).classList.add('hidden');
-      document.getElementById(`uploadIcon${n}`).style.display = '';
+      const icon = document.getElementById(`uploadIcon${n}`);
+      icon.textContent   = '📸';
+      icon.style.display = '';
       document.getElementById(`uploadText${n}`).style.display = '';
       document.getElementById(`removeBtn${n}`).style.display  = 'none';
     }
@@ -259,31 +310,65 @@ function handleUrlInput(n, input) {
     return;
   }
 
+  // If the video checkbox is already checked, apply video mode immediately
+  const cb = document.getElementById(`isVideo${n}`);
+  if (cb && cb.checked) {
+    const videoUrl     = convertDriveVideoUrl(raw);
+    slotIsVideo[n]     = true;
+    imagePastedUrls[n] = videoUrl;
+    setUrlStatus(n, 'ok', '▶ Will be embedded as video');
+    showVideoPreview(n);
+    return;
+  }
+
   setUrlStatus(n, '', '⏳ Checking...');
 
   urlDebounceTimers[n] = setTimeout(() => {
     const converted = convertDriveUrl(raw);
-    imagePastedUrls[n] = converted;
 
-    // Test if the image loads
     const testImg = new Image();
     testImg.onload = () => {
+      slotIsVideo[n]     = false;
+      imagePastedUrls[n] = converted;
       setUrlStatus(n, 'ok', '✓ Image loaded successfully');
       showPreview(n, converted);
     };
     testImg.onerror = () => {
-      // Drive images can fail CORS check but still work in an <img> tag
-      // So we accept it and warn instead of blocking
       if (isDriveUrl(raw)) {
-        setUrlStatus(n, 'ok', '✓ Drive URL converted — make sure sharing is set to public');
+        setUrlStatus(n, 'info', 'Drive URL saved — tick "It\'s a video" below if this is a video');
+        imagePastedUrls[n] = converted; // keep image URL as fallback
+        slotIsVideo[n]     = false;
         showPreview(n, converted);
       } else {
         setUrlStatus(n, 'error', '✗ Could not load image — check the URL');
         imagePastedUrls[n] = null;
+        slotIsVideo[n]     = false;
       }
     };
     testImg.src = converted;
   }, 600);
+}
+
+// Called when the "It's a video" checkbox is toggled
+function handleVideoToggle(n, checkbox) {
+  const raw = document.getElementById(`urlInput${n}`).value.trim();
+  if (!raw) {
+    checkbox.checked = false;
+    return;
+  }
+  if (checkbox.checked) {
+    const videoUrl     = convertDriveVideoUrl(raw);
+    slotIsVideo[n]     = true;
+    imagePastedUrls[n] = videoUrl;
+    setUrlStatus(n, 'ok', '▶ Will be embedded as video');
+    showVideoPreview(n);
+  } else {
+    const imageUrl     = convertDriveUrl(raw);
+    slotIsVideo[n]     = false;
+    imagePastedUrls[n] = imageUrl;
+    setUrlStatus(n, 'ok', '✓ Treated as image');
+    showPreview(n, imageUrl);
+  }
 }
 
 // ---- Drag & Drop ----

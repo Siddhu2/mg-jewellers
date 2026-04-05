@@ -106,7 +106,7 @@
                 Jewellery Images <span class="required">*</span>
               </label>
               <span class="form-hint" style="margin-bottom:12px; display:block;">
-                Upload a file <strong>or</strong> paste a Google Drive / direct image URL for each slot. Image 1 is the main display image.
+                Upload a file <strong>or</strong> paste a Google Drive URL for each slot — images and videos are both supported. Image 1 is the main display image.
               </span>
               <div class="img-upload-grid">
 
@@ -127,6 +127,9 @@
                       placeholder="https://drive.google.com/file/d/..."
                       oninput="handleUrlInput(1, this)">
                     <span class="url-status hidden" id="urlStatus1"></span>
+                    <label class="video-toggle-label">
+                      <input type="checkbox" id="isVideo1" onchange="handleVideoToggle(1, this)"> 🎬 It's a video
+                    </label>
                   </div>
                 </div>
 
@@ -147,6 +150,9 @@
                       placeholder="https://drive.google.com/file/d/..."
                       oninput="handleUrlInput(2, this)">
                     <span class="url-status hidden" id="urlStatus2"></span>
+                    <label class="video-toggle-label">
+                      <input type="checkbox" id="isVideo2" onchange="handleVideoToggle(2, this)"> 🎬 It's a video
+                    </label>
                   </div>
                 </div>
 
@@ -167,12 +173,16 @@
                       placeholder="https://drive.google.com/file/d/..."
                       oninput="handleUrlInput(3, this)">
                     <span class="url-status hidden" id="urlStatus3"></span>
+                    <label class="video-toggle-label">
+                      <input type="checkbox" id="isVideo3" onchange="handleVideoToggle(3, this)"> 🎬 It's a video
+                    </label>
                   </div>
                 </div>
 
               </div>
               <p class="form-hint" style="margin-top:12px;">
-                💡 <strong>Google Drive:</strong> Right-click image → Share → set to <em>"Anyone with the link"</em> → copy link and paste above.
+                💡 <strong>Google Drive images:</strong> Right-click image → Share → <em>"Anyone with the link"</em> → copy link and paste above.<br>
+                🎬 <strong>Google Drive videos:</strong> Same steps — the system auto-detects videos and embeds them with a play button on the item page.
               </p>
             </div>
 

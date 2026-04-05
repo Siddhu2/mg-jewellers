@@ -8,10 +8,11 @@ A fast, elegant jewellery showcase website with admin panel.
 ## Features
 
 - Public catalogue with 8 jewellery categories
-- Each item: 3 images, gram weight, name, unique number
-- Image zoom lightbox, related items, search & sort
-- Admin panel: add, edit, delete items with image upload
+- Each item: up to 3 images or videos, gram weight, name, unique number
+- Image zoom lightbox, video embedding, related items, search & sort
+- Admin panel: add, edit, delete items with image/video upload
 - **Auto image compression** — resizes & converts to JPEG before upload (no manual work needed)
+- **Google Drive video embedding** — paste a Drive video link, tick "It's a video", done
 - Drag & drop image upload with progress bar
 - Mobile responsive, fast-loading (static + CDN)
 
@@ -24,6 +25,7 @@ A fast, elegant jewellery showcase website with admin panel.
 | Frontend | Static HTML/CSS/JS    | Free |
 | Database | Supabase (PostgreSQL) | Free |
 | Images   | Supabase Storage      | Free |
+| Videos   | Google Drive (embed)  | Free |
 | Auth     | Supabase Auth         | Free |
 | Hosting  | Netlify               | Free |
 
@@ -137,10 +139,10 @@ jewelleryShop/
 │   ├── config.js            ← ⭐ EDIT THIS: Supabase credentials
 │   ├── main.js              ← Homepage logic
 │   ├── category.js          ← Category listing logic
-│   ├── item.js              ← Item detail + lightbox
+│   ├── item.js              ← Item detail + lightbox + video
 │   ├── admin.js             ← Auth guard, sidebar, toast utilities
 │   ├── dashboard.js         ← Dashboard table, stats, delete
-│   └── upload.js            ← Image compression + upload logic
+│   └── upload.js            ← Image compression + upload + video logic
 └── supabase-setup.sql       ← Run once in Supabase SQL Editor
 ```
 
@@ -152,6 +154,7 @@ jewelleryShop/
 |---------------|----------------------------------------------------------|
 | Login         | Go to `/admin/` → enter email & password                 |
 | Add item      | Click **"Add New Item"** → fill form → upload images     |
+| Add video     | Paste a Google Drive link → tick **"🎬 It's a video"**   |
 | Edit item     | Click **"Edit"** next to any item in the dashboard       |
 | Delete item   | Click **"Delete"** → confirm (also removes images)       |
 | Search        | Use the search box in the dashboard to filter by name/number |
@@ -163,15 +166,43 @@ jewelleryShop/
 
 Images are automatically compressed **in the browser before uploading** — no manual work needed.
 
-| Setting       | Value                        |
-|---------------|------------------------------|
-| Max dimensions | 1000 × 1000 px              |
-| Output format  | JPEG                        |
-| Quality        | 82%                         |
-| Max input size | 15 MB                       |
-| Typical result | 3MB photo → ~150–250KB      |
+| Setting        | Value                   |
+|----------------|-------------------------|
+| Max dimensions | 1000 × 1000 px          |
+| Output format  | JPEG                    |
+| Quality        | 82%                     |
+| Max input size | 15 MB                   |
+| Typical result | 3MB photo → ~150–250KB  |
 
 A toast notification shows the before/after size after each image is selected.
+
+---
+
+## Video Embedding (Google Drive)
+
+Videos are embedded directly from Google Drive — no storage cost, no file size limits.
+
+**How to add a video to an item:**
+
+1. Upload your video to Google Drive
+2. Right-click the video → **Share** → set to **"Anyone with the link"** → copy the link
+3. In the admin upload form, paste the link into any image slot's URL field
+4. Tick the **"🎬 It's a video"** checkbox
+5. Save — the video will appear as a playable embed on the item page
+
+**How it looks on the item page:**
+
+- A dark `▶` thumbnail appears alongside the image thumbnails
+- Clicking it shows the Google Drive video player in the gallery
+- Clicking any image thumbnail switches back (video pauses automatically)
+- Videos are excluded from the image lightbox/zoom
+
+**How it looks on item cards (homepage / category / related):**
+
+- If the item has at least one regular image, that image is used as the card thumbnail with a `▶` badge overlaid
+- If the item has only a video (no image), a placeholder image is shown with the `▶` badge
+
+> **Note:** Videos are stored as Google Drive embed URLs (`/preview`) in the same image URL fields in the database — no extra database column needed.
 
 ---
 
@@ -224,5 +255,14 @@ A toast notification shows the before/after size after each image is selected.
 **Images not loading after upload**
 → Check that the `jewellery-images` storage bucket is set to **Public** in Supabase → Storage → Policies.
 
+**Video shows "you need access" or a blank iframe**
+→ The Google Drive video sharing must be set to **"Anyone with the link"**, not restricted to specific people.
+
+**Video link saved as image (thumbnail shows instead of play button)**
+→ Make sure you tick the **"🎬 It's a video"** checkbox after pasting the Drive link before saving.
+
 **Page works locally but not on Netlify**
 → Re-drag/redeploy the folder after updating `config.js` with credentials.
+
+**Changes to JS files not reflected in the browser**
+→ Do a hard refresh: `Ctrl + Shift + R` (Windows/Linux) or `Cmd + Shift + R` (Mac) to bypass the browser cache.

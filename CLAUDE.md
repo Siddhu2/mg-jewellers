@@ -141,7 +141,6 @@ Hosted on Netlify. To redeploy after changes:
 - Push to the connected GitHub repo (auto-deploys)
 
 ---
-
 ## Known Issues Fixed (history)
 
 | Issue | Fix |

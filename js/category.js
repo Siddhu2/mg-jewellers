@@ -150,14 +150,27 @@ function goPage(n) {
   window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
+function isVideoUrl(url) {
+  return url && url.includes('drive.google.com/file/d/') && url.includes('/preview');
+}
+
+function driveVideoThumbUrl(previewUrl) {
+  const m = previewUrl.match(/\/file\/d\/([a-zA-Z0-9_-]+)/);
+  return m ? `https://drive.google.com/thumbnail?id=${m[1]}&sz=w400` : null;
+}
+
 function buildItemCard(item) {
-  const imgSrc = item.image1_url || 'https://placehold.co/400x400/F5E6C8/8B6914?text=No+Image';
-  const cat    = CATEGORIES.find(c => c.id === item.category);
+  const placeholder = 'https://placehold.co/400x400/F5E6C8/8B6914?text=No+Image';
+  const allUrls = [item.image1_url, item.image2_url, item.image3_url].filter(Boolean);
+  const isVideo = allUrls.some(isVideoUrl);
+  const imgSrc  = allUrls.find(u => !isVideoUrl(u)) || placeholder;
+  const cat = CATEGORIES.find(c => c.id === item.category);
   return `
     <a href="item.html?id=${item.id}" class="item-card">
       <div class="item-card-img-wrap">
         <img class="item-card-img" src="${imgSrc}" alt="${escHtml(item.name)}" loading="lazy">
         ${cat ? `<span class="item-card-badge">${cat.label}</span>` : ''}
+        ${isVideo ? `<span class="item-card-video-badge">▶</span>` : ''}
       </div>
       <div class="item-card-body">
         <div class="item-card-num"># ${escHtml(item.unique_number)}</div>
