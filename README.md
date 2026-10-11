@@ -47,7 +47,7 @@ A fast, elegant jewellery showcase website with admin panel.
 
 1. In Supabase, go to **SQL Editor**
 2. Click **"New Query"**
-3. Copy the entire content of `supabase-setup.sql`
+3. For a new project, copy `supabase-setup.sql`. For an existing project, run `supabase-category-migration.sql` to add database-backed categories without changing existing product category values.
 4. Paste it and click **"Run"**
 5. You should see "Success" — your table and storage bucket are ready
 
@@ -132,7 +132,8 @@ jewelleryShop/
 ├── admin/
 │   ├── index.html           ← Admin login
 │   ├── dashboard.html       ← Manage all items
-│   └── upload.html          ← Add / Edit item form
+│   ├── upload.html          ← Add / Edit item form
+│   └── categories.html      ← Manage categories and subcategories
 ├── css/
 │   └── style.css            ← All styles (gold luxury theme)
 ├── js/
@@ -142,8 +143,10 @@ jewelleryShop/
 │   ├── item.js              ← Item detail + lightbox + video
 │   ├── admin.js             ← Auth guard, sidebar, toast utilities
 │   ├── dashboard.js         ← Dashboard table, stats, delete
-│   └── upload.js            ← Image compression + upload + video logic
-└── supabase-setup.sql       ← Run once in Supabase SQL Editor
+│   ├── upload.js            ← Image compression + upload + video logic
+│   └── categories.js        ← Category and subcategory management
+├── supabase-setup.sql       ← Full setup for a new Supabase project
+└── supabase-category-migration.sql ← Add categories to an existing project
 ```
 
 ---
@@ -159,6 +162,13 @@ jewelleryShop/
 | Delete item   | Click **"Delete"** → confirm (also removes images)       |
 | Search        | Use the search box in the dashboard to filter by name/number |
 | Filter        | Use the category dropdown to view one category at a time |
+| Categories    | Open **Categories** in the admin sidebar to add categories and optional subcategories |
+
+### Categories and existing items
+
+Existing category IDs (such as `rings` and `bangles-bracelets`) stay unchanged. Existing products remain in those categories and have no subcategory unless one is selected later. Subcategories are optional: category pages show subcategory links when available, while the main category page continues to show all products in that category. Products assigned to a subcategory also appear on the main category page.
+
+For an existing Supabase project, run `supabase-category-migration.sql` before deploying the updated site. It seeds the current eight categories and adds a nullable `subcategory_id`; it does not rewrite existing product rows. A category cannot be deleted while it has products. Removing a subcategory leaves its products in the parent category with no subcategory.
 
 ---
 
@@ -239,7 +249,7 @@ Videos are embedded directly from Google Drive — no storage cost, no file size
 | `necklaces`         | Necklaces           |
 | `bangles-bracelets` | Bangles & Bracelets |
 | `chains`            | Chains              |
-| `nosepins`          | Nosepins            |
+| `haram`             | Haram               |
 | `special-ornaments` | Special Ornaments   |
 
 ---

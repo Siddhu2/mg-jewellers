@@ -5,9 +5,15 @@
 document.addEventListener('DOMContentLoaded', async () => {
   initNav();
   document.getElementById('year').textContent = new Date().getFullYear();
-  renderCategoryCards();
-  renderFooterLinks();
-  await loadFeaturedItems();
+  try {
+    await loadCatalogTaxonomy();
+    renderCategoryCards();
+    renderFooterLinks();
+    await loadFeaturedItems();
+  } catch (err) {
+    console.error(err);
+    document.getElementById('featuredGrid').innerHTML = '<div class="empty-state" style="grid-column:1/-1"><h3>Could Not Load Collection</h3><p>Please check the catalogue database setup.</p></div>';
+  }
 });
 
 // ---- Navbar toggle ----
@@ -27,9 +33,9 @@ function renderCategoryCards() {
   if (!grid) return;
   grid.innerHTML = CATEGORIES.map(cat => `
     <a href="category.html?cat=${cat.id}" class="category-card">
-      <div class="category-icon">${cat.icon}</div>
-      <div class="category-name">${cat.label}</div>
-      <div class="category-desc">${cat.description}</div>
+      <div class="category-icon">${escHtml(cat.icon)}</div>
+      <div class="category-name">${escHtml(cat.label)}</div>
+      <div class="category-desc">${escHtml(cat.description)}</div>
     </a>
   `).join('');
 }
@@ -39,7 +45,7 @@ function renderFooterLinks() {
   const list = document.getElementById('footerCatLinks');
   if (!list) return;
   list.innerHTML = CATEGORIES.map(cat =>
-    `<li><a href="category.html?cat=${cat.id}">${cat.label}</a></li>`
+    `<li><a href="category.html?cat=${encodeURIComponent(cat.id)}">${escHtml(cat.label)}</a></li>`
   ).join('');
 }
 
@@ -105,7 +111,7 @@ function buildItemCard(item) {
           alt="${escHtml(item.name)}"
           loading="lazy"
         >
-        ${cat ? `<span class="item-card-badge">${cat.label}</span>` : ''}
+        ${cat ? `<span class="item-card-badge">${escHtml(cat.label)}</span>` : ''}
         ${isVideo ? `<span class="item-card-video-badge">▶</span>` : ''}
       </div>
       <div class="item-card-body">

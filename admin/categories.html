@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Categories — Admin — MG Jewellers</title>
+  <link rel="icon" href="../assets/mg-jewellers-logo.webp" type="image/webp">
+  <link rel="stylesheet" href="../css/style.css">
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+</head>
+<body>
+<div class="admin-layout">
+  <header class="admin-topbar">
+    <div class="admin-topbar-logo"><img src="../assets/mg-jewellers-logo.webp" alt="MG Jewellers" class="site-logo site-logo-admin"><span>Admin</span></div>
+    <span class="admin-topbar-user" id="userEmail"></span>
+    <button class="btn btn-outline btn-sm" id="logoutBtn">Sign Out</button>
+  </header>
+  <aside class="admin-sidebar">
+    <div class="sidebar-section"><div class="sidebar-section-title">Main</div>
+      <a href="dashboard.html" class="sidebar-link"><span class="sidebar-link-icon">📊</span> Dashboard</a>
+      <a href="upload.html" class="sidebar-link"><span class="sidebar-link-icon">➕</span> Add New Item</a>
+      <a href="categories.html" class="sidebar-link active"><span class="sidebar-link-icon">🗂️</span> Categories</a>
+    </div>
+    <div class="sidebar-section"><div class="sidebar-section-title">Categories</div><div id="sidebarCats"></div></div>
+    <div class="sidebar-section"><div class="sidebar-section-title">View Site</div><a href="../index.html" target="_blank" class="sidebar-link"><span class="sidebar-link-icon">🌐</span> Open Website</a></div>
+  </aside>
+  <main class="admin-main">
+    <div class="admin-page-title">Categories</div>
+    <div class="admin-page-sub">Add categories and optional subcategories for your catalogue.</div>
+    <div class="admin-card">
+      <div class="admin-card-header"><div class="admin-card-title">Add Category</div></div>
+      <div class="admin-card-body">
+        <form id="categoryForm" class="form-grid">
+          <div class="form-group"><label class="form-label" for="categoryName">Name</label><input class="form-input" id="categoryName" required maxlength="80" placeholder="e.g. Anklets"></div>
+          <div class="form-group"><label class="form-label" for="categoryIcon">Icon (emoji)</label><input class="form-input" id="categoryIcon" maxlength="8" value="💎"></div>
+          <div class="form-group form-full"><label class="form-label" for="categoryDescription">Description</label><input class="form-input" id="categoryDescription" maxlength="180" placeholder="Short description shown on the homepage"></div>
+          <div class="form-full"><button class="btn btn-primary" type="submit">Add Category</button></div>
+        </form>
+      </div>
+    </div>
+    <div class="admin-card">
+      <div class="admin-card-header"><div class="admin-card-title">Add Subcategory</div></div>
+      <div class="admin-card-body">
+        <form id="subcategoryForm" class="form-grid">
+          <div class="form-group"><label class="form-label" for="parentCategory">Parent category</label><select class="form-select" id="parentCategory" required></select></div>
+          <div class="form-group"><label class="form-label" for="subcategoryName">Subcategory name</label><input class="form-input" id="subcategoryName" required maxlength="80" placeholder="e.g. Studs"></div>
+          <div class="form-full"><button class="btn btn-primary" type="submit">Add Subcategory</button></div>
+        </form>
+      </div>
+    </div>
+    <div class="admin-card">
+      <div class="admin-card-header"><div class="admin-card-title">Current Categories</div></div>
+      <div class="admin-card-body" id="categoryList"><div class="loading"><div class="spinner"></div></div></div>
+    </div>
+  </main>
+</div>
+<div class="toast-container" id="toastContainer"></div>
+<script src="../js/config.js"></script>
+<script src="../js/catalog.js"></script>
+<script src="../js/categories.js"></script>
+<script src="../js/admin.js"></script>
+</body>
+</html>

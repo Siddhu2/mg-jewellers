@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Dashboard — Admin — MG Jewellers</title>
-  <link rel="icon" href="../favicon.svg" type="image/svg+xml">
+  <link rel="icon" href="../assets/mg-jewellers-logo.webp" type="image/webp">
   <link rel="stylesheet" href="../css/style.css">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -15,7 +15,10 @@
 
   <!-- Top Bar -->
   <header class="admin-topbar">
-    <div class="admin-topbar-logo">✦ MG Jewellers — Admin</div>
+    <div class="admin-topbar-logo">
+      <img src="../assets/mg-jewellers-logo.webp" alt="MG Jewellers Ramanathapuram" class="site-logo site-logo-admin">
+      <span>Admin</span>
+    </div>
     <span class="admin-topbar-user" id="userEmail"></span>
     <button class="btn btn-outline btn-sm" id="logoutBtn">Sign Out</button>
   </header>
@@ -30,6 +33,7 @@
       <a href="upload.html" class="sidebar-link">
         <span class="sidebar-link-icon">➕</span> Add New Item
       </a>
+      <a href="categories.html" class="sidebar-link"><span class="sidebar-link-icon">🗂️</span> Categories</a>
     </div>
     <div class="sidebar-section">
       <div class="sidebar-section-title">Categories</div>
@@ -80,7 +84,7 @@
                 <th>Image</th>
                 <th>Item #</th>
                 <th>Name</th>
-                <th>Category</th>
+                <th>Category / Subcategory</th>
                 <th>Weight</th>
                 <th>Added</th>
                 <th>Actions</th>
@@ -113,6 +117,7 @@
 <div class="toast-container" id="toastContainer"></div>
 
 <script src="../js/config.js"></script>
+<script src="../js/catalog.js"></script>
 <script src="../js/dashboard.js"></script>
 <script src="../js/admin.js"></script>
 </body>

@@ -15,6 +15,7 @@ let editMode   = false;
 let editItemId = null;
 
 async function initUploadPage() {
+  await loadCatalogTaxonomy();
   const catSelect = document.getElementById('itemCategory');
   if (catSelect) {
     CATEGORIES.forEach(cat => {
@@ -23,6 +24,7 @@ async function initUploadPage() {
       opt.textContent = cat.icon + ' ' + cat.label;
       catSelect.appendChild(opt);
     });
+    catSelect.addEventListener('change', () => populateSubcategorySelect(catSelect.value));
   }
 
   const params = new URLSearchParams(window.location.search);
@@ -43,6 +45,17 @@ async function initUploadPage() {
   document.getElementById('itemForm').addEventListener('submit', handleFormSubmit);
 }
 
+function populateSubcategorySelect(categoryId, selectedId = '') {
+  const select = document.getElementById('itemSubcategory');
+  if (!select) return;
+  const options = SUBCATEGORIES.filter(sub => sub.category_id === categoryId);
+  select.innerHTML = '<option value="">— No Subcategory —</option>' + options.map(sub =>
+    `<option value="${sub.id}">${escHtml(sub.label)}</option>`
+  ).join('');
+  select.disabled = options.length === 0;
+  select.value = selectedId;
+}
+
 async function loadEditItem(id) {
   try {
     const { data, error } = await supabaseClient
@@ -56,6 +69,7 @@ async function loadEditItem(id) {
     document.getElementById('itemName').value     = data.name          || '';
     document.getElementById('itemNumber').value   = data.unique_number || '';
     document.getElementById('itemCategory').value = data.category      || '';
+    populateSubcategorySelect(data.category || '', data.subcategory_id || '');
     document.getElementById('itemGram').value     = data.gram_weight   || '';
     document.getElementById('itemDesc').value     = data.description   || '';
 
@@ -434,6 +448,7 @@ async function handleFormSubmit(e) {
   const name     = document.getElementById('itemName').value.trim();
   const number   = document.getElementById('itemNumber').value.trim();
   const category = document.getElementById('itemCategory').value;
+  const subcategoryId = document.getElementById('itemSubcategory').value || null;
   const gram     = parseFloat(document.getElementById('itemGram').value);
   const desc     = document.getElementById('itemDesc').value.trim();
 
@@ -460,6 +475,7 @@ async function handleFormSubmit(e) {
           name:          name,
           unique_number: number,
           category:      category,
+          subcategory_id: subcategoryId,
           gram_weight:   gram,
           description:   desc || null,
         })
@@ -492,6 +508,7 @@ async function handleFormSubmit(e) {
         name:          name,
         unique_number: number,
         category:      category,
+        subcategory_id: subcategoryId,
         gram_weight:   gram,
         description:   desc || null,
         updated_at:    new Date().toISOString(),

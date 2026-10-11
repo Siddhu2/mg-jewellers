@@ -25,12 +25,21 @@ let currentUser = null;
     });
   }
 
+  try {
+    await loadCatalogTaxonomy();
+  } catch (err) {
+    console.error(err);
+    showToast('Could not load categories. Apply the database setup SQL first.', 'error');
+    return;
+  }
+
   buildSidebarCats();
 
   // Call page-specific init — these are defined in dashboard.js / upload.js
   // which are loaded BEFORE this file in each HTML page
   if (typeof initDashboard  === 'function') initDashboard();
   if (typeof initUploadPage === 'function') initUploadPage();
+  if (typeof initCategoriesPage === 'function') initCategoriesPage();
 })();
 
 // ---- Sidebar category links ----
@@ -38,8 +47,8 @@ function buildSidebarCats() {
   const el = document.getElementById('sidebarCats');
   if (!el) return;
   el.innerHTML = CATEGORIES.map(cat => `
-    <a href="../category.html?cat=${cat.id}" target="_blank" class="sidebar-link">
-      <span class="sidebar-link-icon">${cat.icon}</span> ${cat.label}
+    <a href="../category.html?cat=${encodeURIComponent(cat.id)}" target="_blank" class="sidebar-link">
+      <span class="sidebar-link-icon">${escHtml(cat.icon)}</span> ${escHtml(cat.label)}
     </a>
   `).join('');
 }

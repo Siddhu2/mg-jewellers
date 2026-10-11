@@ -21,6 +21,8 @@ document.addEventListener('DOMContentLoaded', async () => {
     return;
   }
 
+  try { await loadCatalogTaxonomy(); }
+  catch (err) { console.error(err); showError('Catalogue data could not be loaded.'); return; }
   await loadItem(id);
   initLightbox();
 });
@@ -62,6 +64,7 @@ function getDriveViewUrl(previewUrl) {
 
 function renderItem(item) {
   const cat = CATEGORIES.find(c => c.id === item.category);
+  const subcat = SUBCATEGORIES.find(s => s.id === item.subcategory_id);
 
   // Breadcrumb
   const catLink = document.getElementById('breadCatLink');
@@ -154,7 +157,7 @@ function renderItem(item) {
           </div>
           <div class="spec-box">
             <div class="spec-label">Category</div>
-            <div class="spec-value">${cat ? cat.label : escHtml(item.category)}</div>
+            <div class="spec-value">${cat ? escHtml(cat.label) : escHtml(item.category)}${subcat ? ` · ${escHtml(subcat.label)}` : ''}</div>
           </div>
           <div class="spec-box">
             <div class="spec-label">Media</div>
@@ -324,7 +327,7 @@ function buildItemCard(item) {
     <a href="item.html?id=${item.id}" class="item-card">
       <div class="item-card-img-wrap">
         <img class="item-card-img" src="${imgSrc}" alt="${escHtml(item.name)}" loading="lazy">
-        ${cat ? `<span class="item-card-badge">${cat.label}</span>` : ''}
+        ${cat ? `<span class="item-card-badge">${escHtml(cat.label)}</span>` : ''}
         ${isVideo ? `<span class="item-card-video-badge">▶</span>` : ''}
       </div>
       <div class="item-card-body">

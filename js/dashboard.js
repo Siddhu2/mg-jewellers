@@ -7,14 +7,14 @@ let dashFiltered   = [];
 let deleteTargetId = null;
 
 async function initDashboard() {
-  await loadDashItems();
-
   const catFilter = document.getElementById('catFilter');
   if (catFilter) {
     catFilter.innerHTML = '<option value="">All Categories</option>' +
-      CATEGORIES.map(c => `<option value="${c.id}">${c.label}</option>`).join('');
+      CATEGORIES.map(c => `<option value="${escHtml(c.id)}">${escHtml(c.label)}</option>`).join('');
     catFilter.addEventListener('change', dashFilter);
   }
+
+  await loadDashItems();
 
   let searchTimer;
   const searchInput = document.getElementById('tableSearch');
@@ -116,7 +116,7 @@ function renderTable(items) {
         <td><img class="admin-table-img" src="${imgSrc}" alt="${escHtml(item.name)}" loading="lazy"></td>
         <td><strong style="color:var(--gold-dark)">${escHtml(item.unique_number)}</strong></td>
         <td>${escHtml(item.name)}</td>
-        <td>${cat ? cat.icon + ' ' + cat.label : escHtml(item.category)}</td>
+        <td>${cat ? escHtml(cat.icon + ' ' + cat.label) : escHtml(item.category)}${SUBCATEGORIES.some(s => s.id === item.subcategory_id) ? `<br><small>${escHtml(SUBCATEGORIES.find(s => s.id === item.subcategory_id).label)}</small>` : ''}</td>
         <td>${item.gram_weight}g</td>
         <td>${formatDate(item.created_at)}</td>
         <td>

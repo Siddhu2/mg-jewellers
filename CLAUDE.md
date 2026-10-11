@@ -40,18 +40,21 @@ jewelleryShop/
 ├── admin/
 │   ├── index.html           ← Admin login page
 │   ├── dashboard.html       ← View/search/delete all items
-│   └── upload.html          ← Add new item or edit existing (?edit=uuid)
+│   ├── upload.html          ← Add new item or edit existing (?edit=uuid)
+│   └── categories.html      ← Manage categories and subcategories
 ├── css/
 │   └── style.css            ← All styles — luxury gold theme
 ├── js/
-│   ├── config.js            ← Supabase credentials + CATEGORIES array + client init
+│   ├── config.js            ← Supabase credentials + taxonomy loader + client init
 │   ├── main.js              ← Homepage: featured items, category grid
 │   ├── category.js          ← Category page: filter, sort, pagination
 │   ├── item.js              ← Item detail: gallery, lightbox, related items
 │   ├── admin.js             ← Shared admin: auth guard IIFE, sidebar, toast, utils
 │   ├── dashboard.js         ← Dashboard only: table, stats, search, delete modal
-│   └── upload.js            ← Upload form: image compression + Supabase upload
+│   ├── upload.js            ← Upload form: image compression + Supabase upload
+│   └── categories.js        ← Admin category management
 ├── supabase-setup.sql       ← Run once in Supabase SQL Editor to create DB schema
+├── supabase-category-migration.sql ← Add taxonomy support to an existing database
 └── README.md                ← Full setup guide for the shop owner
 ```
 
@@ -67,6 +70,7 @@ Table: `jewellery_items`
 | `unique_number`| TEXT           | Unique item code, e.g. RNG-001 |
 | `name`         | TEXT           | Item name                    |
 | `category`     | TEXT           | One of 8 category IDs        |
+| `subcategory_id` | UUID, nullable | Optional subcategory reference |
 | `gram_weight`  | DECIMAL(10,3)  | Weight in grams              |
 | `image1_url`   | TEXT           | Main image (public URL)      |
 | `image2_url`   | TEXT           | Second image (optional)      |
@@ -76,6 +80,8 @@ Table: `jewellery_items`
 | `updated_at`   | TIMESTAMPTZ    | Auto updated via trigger     |
 
 RLS is enabled. Public can SELECT. Only authenticated users can INSERT/UPDATE/DELETE.
+
+Categories are stored in `categories` and `subcategories` tables. Category IDs stay as slugs in `jewellery_items.category`; `subcategory_id` is optional, so existing category-only products remain valid. Run `supabase-category-migration.sql` on the live database before deploying taxonomy-aware site code.
 
 ---
 
@@ -89,7 +95,7 @@ RLS is enabled. Public can SELECT. Only authenticated users can INSERT/UPDATE/DE
 | `necklaces`         | Necklaces           |
 | `bangles-bracelets` | Bangles & Bracelets |
 | `chains`            | Chains              |
-| `nosepins`          | Nosepins            |
+| `haram`             | Haram               |
 | `special-ornaments` | Special Ornaments   |
 
 ---
@@ -97,10 +103,11 @@ RLS is enabled. Public can SELECT. Only authenticated users can INSERT/UPDATE/DE
 ## Key Architecture Decisions
 
 ### Script load order in admin pages (critical)
-The auth guard in `admin.js` is an async IIFE that awaits `supabaseClient.auth.getSession()`. After the await resolves, it calls `initDashboard()` or `initUploadPage()` if they exist. For this to work, page-specific scripts **must be loaded before `admin.js`**:
+The auth guard in `admin.js` is an async IIFE that awaits `supabaseClient.auth.getSession()` and loads taxonomy before page initialization. Page-specific scripts **must be loaded before `admin.js`**:
 
 - `dashboard.html`: `config.js` → `dashboard.js` → `admin.js`
 - `upload.html`: `config.js` → `upload.js` → `admin.js`
+- `categories.html`: `config.js` → `categories.js` → `admin.js`
 
 If `admin.js` is loaded first, the page-specific init functions won't be defined when the IIFE resumes (microtask queue runs before the next script tag is parsed).
 

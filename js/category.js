@@ -15,10 +15,19 @@ document.addEventListener('DOMContentLoaded', async () => {
     document.getElementById('navLinks').classList.toggle('open');
   });
 
+  try { await loadCatalogTaxonomy(); }
+  catch (err) {
+    console.error(err);
+    document.getElementById('itemsGrid').innerHTML = '<div class="empty-state" style="grid-column:1/-1"><h3>Catalogue Setup Needed</h3><p>Category data could not be loaded.</p></div>';
+    return;
+  }
+
   // Resolve category from URL
   const params   = new URLSearchParams(window.location.search);
   const catId    = params.get('cat');
+  const subId    = params.get('sub');
   const cat      = CATEGORIES.find(c => c.id === catId);
+  const sub      = SUBCATEGORIES.find(s => s.id === subId && s.category_id === catId);
 
   if (!cat) {
     // Show all items if no category given
@@ -26,13 +35,14 @@ document.addEventListener('DOMContentLoaded', async () => {
     document.getElementById('breadcrumbCat').textContent = 'All';
     document.title = 'All Jewellery — MG Jewellers';
   } else {
-    document.getElementById('pageTitle').textContent = cat.icon + ' ' + cat.label;
+    document.getElementById('pageTitle').textContent = (cat.icon || '') + ' ' + (sub ? sub.label : cat.label);
     document.getElementById('pageDesc').textContent  = cat.description;
-    document.getElementById('breadcrumbCat').textContent = cat.label;
-    document.title = cat.label + ' — MG Jewellers';
+    document.getElementById('breadcrumbCat').textContent = sub ? `${cat.label} › ${sub.label}` : cat.label;
+    document.title = (sub ? sub.label : cat.label) + ' — MG Jewellers';
+    renderSubcategoryNav(cat, sub);
   }
 
-  await loadItems(catId);
+  await loadItems(catId, sub ? sub.id : null);
 
   document.getElementById('sortSelect').addEventListener('change', applyFilters);
   let searchTimer;
@@ -42,7 +52,15 @@ document.addEventListener('DOMContentLoaded', async () => {
   });
 });
 
-async function loadItems(catId) {
+function renderSubcategoryNav(category, selectedSubcategory) {
+  const nav = document.getElementById('subcategoryNav');
+  const children = SUBCATEGORIES.filter(sub => sub.category_id === category.id);
+  if (!children.length) return;
+  nav.innerHTML = `<a class="subcategory-chip${selectedSubcategory ? '' : ' active'}" href="category.html?cat=${encodeURIComponent(category.id)}">All ${escHtml(category.label)}</a>` +
+    children.map(sub => `<a class="subcategory-chip${selectedSubcategory && selectedSubcategory.id === sub.id ? ' active' : ''}" href="category.html?cat=${encodeURIComponent(category.id)}&sub=${encodeURIComponent(sub.id)}">${escHtml(sub.label)}</a>`).join('');
+}
+
+async function loadItems(catId, subcategoryId) {
   const grid = document.getElementById('itemsGrid');
   grid.innerHTML = `<div class="loading" style="grid-column:1/-1"><div class="spinner"></div><span>Loading...</span></div>`;
 
@@ -53,6 +71,7 @@ async function loadItems(catId) {
       .order('created_at', { ascending: false });
 
     if (catId) query = query.eq('category', catId);
+    if (subcategoryId) query = query.eq('subcategory_id', subcategoryId);
 
     const { data, error } = await query;
     if (error) throw error;
@@ -169,7 +188,7 @@ function buildItemCard(item) {
     <a href="item.html?id=${item.id}" class="item-card">
       <div class="item-card-img-wrap">
         <img class="item-card-img" src="${imgSrc}" alt="${escHtml(item.name)}" loading="lazy">
-        ${cat ? `<span class="item-card-badge">${cat.label}</span>` : ''}
+        ${cat ? `<span class="item-card-badge">${escHtml(cat.label)}</span>` : ''}
         ${isVideo ? `<span class="item-card-video-badge">▶</span>` : ''}
       </div>
       <div class="item-card-body">
